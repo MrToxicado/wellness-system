@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  margin: 16px;
+}
+
+.icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.title {
+  color: #DC2626;
+  margin-bottom: 8px;
+}
+
+.message {
+  color: #6B7280;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.retryBtn {
+  padding: 8px 20px;
+  background: #DC2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}

@@ -1,0 +1,214 @@
+.clientRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.clientAvatarLg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F97316;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.clientName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.clientPhone {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.clearClientBtn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9CA3AF;
+  font-size: 18px;
+}
+
+.searchWrapper {
+  position: relative;
+}
+
+.searchInputRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.searchField {
+  flex: 1;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.searchInput {
+  padding: 0 10px 0 32px !important;
+}
+
+.addBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F59E0B;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clientDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.clientOption {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #F3F4F6;
+  font-size: 13px;
+}
+
+.clientOptionName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.clientOptionPhone {
+  color: #6B7280;
+  font-size: 12px;
+}
+
+.outletRow {
+  padding: 10px 16px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.outletLabel {
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+.outletName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.addLinks {
+  padding: 10px 16px;
+  display: flex;
+  gap: 20px;
+}
+
+/* Multi-service rows */
+.serviceSection {
+  border-top: 2px solid #F3F4F6;
+  margin-top: 4px;
+}
+
+.serviceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 0;
+}
+
+.serviceLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.serviceStartTime {
+  font-size: 11px;
+  color: #6B7280;
+  background: #F3F4F6;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.removeServiceBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #9CA3AF;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.removeServiceBtn:hover {
+  color: #EF4444;
+}
+
+.addLink {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #F59E0B;
+  font-weight: 600;
+  padding: 0;
+}
+
+.reqCheckRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.reqCheckLabel {
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.serviceField {
+  flex: 2;
+}
+
+.durationField {
+  flex: 1;
+}
+
+.reqCheckbox {
+  accent-color: #231511;
+}

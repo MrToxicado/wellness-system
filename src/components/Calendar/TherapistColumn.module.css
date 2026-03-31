@@ -1,0 +1,81 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-right: 1px solid #E5E7EB;
+  /* width is set inline as computed from constant */
+}
+
+.header {
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border-bottom: 1px solid #E5E7EB;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  gap: 6px;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  /* background is set inline as gender-based */
+}
+
+.nameStack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.therapistName {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.therapistGender {
+  font-size: 10px;
+  color: #9CA3AF;
+}
+
+.dropZone {
+  position: relative;
+  cursor: pointer;
+  /* height and background are set inline as computed/dynamic */
+}
+
+.hourLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  /* top and border-top are set inline as computed */
+}
+
+.halfHourLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed #F3F4F6;
+  pointer-events: none;
+  /* top is set inline as computed */
+}

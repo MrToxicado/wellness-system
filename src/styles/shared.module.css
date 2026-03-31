@@ -1,0 +1,184 @@
+/* Shared panel styles */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 380px;
+  background: #fff;
+  border-left: 1px solid #E5E7EB;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.2s ease;
+  font-family: inherit;
+}
+
+.panelHeader {
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.panelTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.panelBody {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.panelFooter {
+  padding: 12px 16px;
+  border-top: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 58;
+  background: transparent;
+}
+
+.overlayDark {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 70;
+}
+
+.formRow {
+  padding: 10px 16px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.formLabel {
+  font-size: 11px;
+  color: #9CA3AF;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.formInput {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  font-size: 13px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  background: #fff;
+  font-family: inherit;
+}
+
+.formInputReadonly {
+  background: #F9FAFB;
+  color: #9CA3AF;
+  border: 1px dashed #E5E7EB;
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: #fff;
+  resize: vertical;
+}
+
+.formRow2Col {
+  display: flex;
+  gap: 12px;
+}
+
+.formRow2Col > div {
+  flex: 1;
+}
+
+.btnPrimary {
+  width: 100%;
+  height: 44px;
+  background: #231511;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  flex: 1;
+  height: 44px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btnCancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #F59E0B;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F97316;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.divider {
+  height: 1px;
+  background: #E5E7EB;
+  margin: 12px 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E5E7EB;
+  border-top-color: #231511;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}

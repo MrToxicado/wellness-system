@@ -1,0 +1,56 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  font-family: inherit;
+  border: 1px solid transparent;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Sizes */
+.sm { padding: 6px 12px; font-size: 12px; }
+.md { padding: 8px 16px; font-size: 14px; }
+.lg { padding: 10px 20px; font-size: 15px; }
+
+/* Variants */
+.primary { background: #3B82F6; color: #fff; }
+.primary:not(:disabled):hover { background: #2563EB; }
+
+.danger { background: #EF4444; color: #fff; }
+.danger:not(:disabled):hover { background: #DC2626; }
+
+.success { background: #10B981; color: #fff; }
+.success:not(:disabled):hover { background: #059669; }
+
+.ghost { background: transparent; color: #374151; border-color: #D1D5DB; }
+.ghost:not(:disabled):hover { background: #F3F4F6; }
+
+.warning { background: #F59E0B; color: #fff; }
+.warning:not(:disabled):hover { background: #D97706; }
+
+.pink { background: #EC4899; color: #fff; }
+.pink:not(:disabled):hover { background: #DB2777; }
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}

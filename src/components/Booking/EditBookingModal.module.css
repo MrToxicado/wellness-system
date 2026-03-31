@@ -1,0 +1,22 @@
+.reqCheckRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.reqCheckLabel {
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.outletInput {
+  background: #F9FAFB;
+  color: #9CA3AF;
+  border: 1px dashed #E5E7EB;
+}
+
+.reqCheckbox {
+  accent-color: #231511;
+}
