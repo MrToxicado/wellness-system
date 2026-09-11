@@ -98,8 +98,13 @@ def create_user():
 # 6. Bookings
 @app.route('/api/v1/bookings/outlet/booking/list', methods=['GET'])
 def get_bookings():
+    date_param = request.args.get('date') or request.args.get('service_at') or request.args.get('start_date')
     conn = get_db_connection()
-    rows = conn.execute("SELECT * FROM bookings").fetchall()
+    if date_param:
+        clean_date = date_param.split('T')[0].split(' ')[0]
+        rows = conn.execute("SELECT * FROM bookings WHERE start_time LIKE ?", (f"{clean_date}%",)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM bookings").fetchall()
     conn.close()
 
     formatted_bookings = []
@@ -138,7 +143,8 @@ def get_bookings():
 
 @app.route('/api/v1/bookings/create', methods=['POST'])
 def create_booking():
-    items_raw = request.form.get('items') or request.json.get('items') if request.json else '[]'
+    data = request.json or request.form
+    items_raw = data.get('items', []) if isinstance(data, dict) else []
     items = []
     if isinstance(items_raw, str):
         try:
@@ -149,30 +155,35 @@ def create_booking():
         items = items_raw
 
     primary_item = items[0] if items else {}
-    client_name = request.form.get('customer_name') or request.form.get('client_name') or 'Guest Client'
-    therapist_id = primary_item.get('therapist') or request.form.get('therapist_id') or 1
-    service_id = primary_item.get('service') or request.form.get('service_id') or 1
-    
-    room_segments = primary_item.get('room_segments') or []
-    room_id = room_segments[0].get('room_id') if room_segments else (request.form.get('room_id') or 1)
-    
-    service_at = request.form.get('service_at', '')
-    start_time = service_at.replace(' ', 'T') if service_at else datetime.datetime.now().isoformat()
-    duration = int(primary_item.get('duration') or request.form.get('duration_minutes') or 60)
-    
-    try:
-        start_dt = datetime.datetime.fromisoformat(start_time)
-    except Exception:
-        start_dt = datetime.datetime.now()
-        start_time = start_dt.isoformat()
-        
-    end_dt = start_dt + datetime.timedelta(minutes=duration)
-    end_time = end_dt.isoformat()
+    client_name = data.get('client_name') or data.get('customer_name') or primary_item.get('customer_name') or 'Guest Client'
+    therapist_id = primary_item.get('therapist_id') or primary_item.get('therapist') or data.get('therapist_id') or 1
+    service_id = primary_item.get('service_id') or primary_item.get('service') or data.get('service_id') or 1
+    room_id = primary_item.get('room_id') or data.get('room_id') or 1
+
+    start_time = primary_item.get('start_time') or data.get('start_time')
+    end_time = primary_item.get('end_time') or data.get('end_time')
+    duration = int(primary_item.get('duration_minutes') or primary_item.get('duration') or data.get('duration_minutes') or 60)
+
+    if not start_time:
+        service_at = data.get('service_at', '')
+        start_time = service_at.replace(' ', 'T') if service_at else datetime.datetime.now().strftime('%Y-%m-%dT09:00:00')
+
+    if not end_time and start_time:
+        try:
+            start_clean = start_time.replace(' ', 'T').split('.')[0]
+            start_dt = datetime.datetime.fromisoformat(start_clean)
+            end_dt = start_dt + datetime.timedelta(minutes=duration)
+            end_time = end_dt.strftime('%Y-%m-%dT%H:%M:%S')
+        except Exception:
+            end_time = start_time
+
+    start_time = start_time.replace(' ', 'T').split('.')[0] if start_time else ''
+    end_time = end_time.replace(' ', 'T').split('.')[0] if end_time else ''
 
     status = 'confirmed'
-    requested = 1 if primary_item.get('requested_person') else 0
-    notes = request.form.get('note') or request.form.get('notes') or ''
-    source = request.form.get('source') or 'Walk-in'
+    requested = 1 if (primary_item.get('requested_therapist') or primary_item.get('requested_person') or data.get('requested_therapist')) else 0
+    notes = data.get('notes') or data.get('note') or ''
+    source = data.get('source') or 'Walk-in'
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -186,7 +197,7 @@ def create_booking():
     conn.commit()
     conn.close()
 
-    print(f"[Python Server] Created booking #{booking_id} for {client_name}")
+    print(f"[Python Server] Created booking #{booking_id} for {client_name} at {start_time}")
     return jsonify({'success': True, 'id': booking_id})
 
 @app.route('/api/v1/bookings/<int:booking_id>', methods=['POST', 'PUT'])
@@ -196,6 +207,13 @@ def update_booking(booking_id):
     room_id = data.get('room_id')
     status = data.get('status')
     notes = data.get('notes')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+
+    if start_time:
+        start_time = start_time.replace(' ', 'T').split('.')[0]
+    if end_time:
+        end_time = end_time.replace(' ', 'T').split('.')[0]
 
     conn = get_db_connection()
     conn.execute('''
@@ -203,12 +221,15 @@ def update_booking(booking_id):
         SET therapist_id = COALESCE(?, therapist_id),
             room_id = COALESCE(?, room_id),
             status = COALESCE(?, status),
-            notes = COALESCE(?, notes)
+            notes = COALESCE(?, notes),
+            start_time = COALESCE(?, start_time),
+            end_time = COALESCE(?, end_time)
         WHERE id = ?
-    ''', (therapist_id, room_id, status, notes, booking_id))
+    ''', (therapist_id, room_id, status, notes, start_time, end_time, booking_id))
     conn.commit()
     conn.close()
 
+    print(f"[Python Server] Updated booking #{booking_id} start_time={start_time}")
     return jsonify({'success': True})
 
 @app.route('/api/v1/bookings/destroy/<int:booking_id>', methods=['DELETE'])

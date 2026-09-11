@@ -3,7 +3,7 @@ import useBookingStore from '../../store/bookingStore';
 import useTherapistStore from '../../store/therapistStore';
 import useUIStore from '../../store/uiStore';
 import useAuthStore from '../../store/authStore';
-import { buildDateTime } from '../../utils/dateUtils';
+import { buildDateTime, formatISOLocal } from '../../utils/dateUtils';
 import logger from '../../utils/logger';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './CreateBookingModal.module.css';
@@ -103,8 +103,8 @@ const CreateBookingModal = () => {
         room_item_id: svc.room_id
           ? rooms.find(r => (r.room_id || r.id) === Number(svc.room_id))?.items?.[0]?.item_id
           : undefined,
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
+        start_time: formatISOLocal(start),
+        end_time: formatISOLocal(end),
         duration_minutes: Number(svc.duration),
         requested_therapist: svc.requested_therapist,
       };
@@ -124,6 +124,9 @@ const CreateBookingModal = () => {
     const result = await createBooking(payload);
     if (result.success) {
       showSuccess('Booking created successfully');
+      if (form.date) {
+        useBookingStore.getState().setSelectedDate(form.date);
+      }
       close();
     } else {
       showError(result.error || 'Failed to create booking');

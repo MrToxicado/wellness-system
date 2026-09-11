@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react';
 import useBookingStore from '../../store/bookingStore';
 import useUIStore from '../../store/uiStore';
+import useTherapistStore from '../../store/therapistStore';
 import { normalizeStatus, canCancelBooking } from '../../utils/bookingUtils';
 import { formatDisplayTime, formatDate } from '../../utils/dateUtils';
 import sharedStyles from '../../styles/shared.module.css';
@@ -29,10 +30,14 @@ const BookingPanel = memo(() => {
   const showSuccess = useUIStore(s => s.showSuccess);
   const showError = useUIStore(s => s.showError);
 
-  if (!isPanelOpen || !selectedBooking) return null;
-
   const booking = selectedBooking;
-  const status = normalizeStatus(booking.status);
+  const therapistsById = useTherapistStore(s => s.therapistsById);
+
+  if (!isPanelOpen || !booking) return null;
+
+  const therapist = therapistsById[booking?.therapist_id] || booking?.therapist;
+  const therapistName = therapist?.name || therapist?.alias || (booking?.therapist_id ? `Therapist #${booking.therapist_id}` : 'Unassigned');
+  const status = normalizeStatus(booking?.status);
   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.confirmed;
 
   const handleCheckIn = async () => {
@@ -168,18 +173,18 @@ const BookingPanel = memo(() => {
               </div>
               <div className={styles.serviceDetailRow}>
                 <DetailLabel>With:</DetailLabel>
-                {booking.therapist && (
+                {therapist && (
                   <div
                     className={styles.therapistAvatar}
                     style={{
-                      background: (booking.therapist.gender || '').toLowerCase() === 'male' ? '#3B82F6' : '#EC4899',
+                      background: (therapist.gender || '').toLowerCase() === 'male' ? '#3B82F6' : '#EC4899',
                     }}
                   >
-                    {(booking.therapist.name || '')[0]}
+                    {(therapist.name || '')[0]}
                   </div>
                 )}
                 <span className={styles.therapistName}>
-                  {booking.therapist?.name || `Therapist #${booking.therapist_id}`}
+                  {therapistName}
                 </span>
                 <span className={styles.requestedRow}>
                   <input type="checkbox" readOnly checked={!!booking.requested_therapist} className={styles.requestedCheckbox} />

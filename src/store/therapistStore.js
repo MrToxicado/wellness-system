@@ -38,7 +38,9 @@ const useTherapistStore = create((set, get) => ({
       const therapists = extractList(data, ['staffs']);
       if (therapists && therapists.length > 0) {
         const therapistsById = therapists.reduce((acc, t) => {
-          acc[t.therapist_id || t.id] = t;
+          if (!t) return acc;
+          if (t.id) { acc[t.id] = t; acc[String(t.id)] = t; }
+          if (t.therapist_id) { acc[t.therapist_id] = t; acc[String(t.therapist_id)] = t; }
           return acc;
         }, {});
         set({ therapists, therapistsById, isLoading: false });

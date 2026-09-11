@@ -24,3 +24,8 @@ Thumbs.db
 .vscode/
 .idea/
 .vercel
+
+# Python / Backend
+backend/__pycache__/
+backend/*.db
+server/

@@ -1,9 +1,26 @@
 import { format, parseISO, addMinutes, differenceInMinutes, startOfDay, isToday, isSameDay } from 'date-fns';
 import { CALENDAR_START_HOUR, SLOT_INTERVAL, TIME_SLOT_HEIGHT } from '../constants';
 
+export const formatISOLocal = (d) => {
+  if (!d) return '';
+  const str = typeof d === 'string' ? d.replace(' ', 'T') : '';
+  const dt = typeof d === 'string' ? parseISO(str) : d;
+  if (isNaN(dt.getTime())) return typeof d === 'string' ? d : '';
+  const yyyy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getDate()).padStart(2, '0');
+  const hh = String(dt.getHours()).padStart(2, '0');
+  const min = String(dt.getMinutes()).padStart(2, '0');
+  const ss = String(dt.getSeconds()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}`;
+};
+
 export const formatDate = (date, fmt = 'yyyy-MM-dd') => {
   try {
-    const d = typeof date === 'string' ? parseISO(date) : date;
+    if (!date) return '';
+    const str = String(date).replace(' ', 'T');
+    if (str.length >= 10 && fmt === 'yyyy-MM-dd') return str.substring(0, 10);
+    const d = typeof date === 'string' ? parseISO(str) : date;
     return format(d, fmt);
   } catch {
     return '';
@@ -12,7 +29,13 @@ export const formatDate = (date, fmt = 'yyyy-MM-dd') => {
 
 export const formatTime = (date, fmt = 'HH:mm') => {
   try {
-    const d = typeof date === 'string' ? parseISO(date) : date;
+    if (!date) return '';
+    const str = String(date).replace(' ', 'T');
+    const timeMatch = str.match(/T(\d{2}):(\d{2})/);
+    if (timeMatch && fmt === 'HH:mm') {
+      return `${timeMatch[1]}:${timeMatch[2]}`;
+    }
+    const d = parseISO(str);
     return format(d, fmt);
   } catch {
     return '';
@@ -21,7 +44,17 @@ export const formatTime = (date, fmt = 'HH:mm') => {
 
 export const formatDisplayTime = (date) => {
   try {
-    const d = typeof date === 'string' ? parseISO(date) : date;
+    if (!date) return '';
+    const str = String(date).replace(' ', 'T');
+    const timeMatch = str.match(/T(\d{2}):(\d{2})/);
+    if (timeMatch) {
+      let h = parseInt(timeMatch[1], 10);
+      const m = timeMatch[2];
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${h}:${m} ${ampm}`;
+    }
+    const d = parseISO(str);
     return format(d, 'h:mm a');
   } catch {
     return '';
@@ -32,8 +65,9 @@ export const formatDisplayTime = (date) => {
  * Convert a time string "HH:mm" to pixel offset from calendar start
  */
 export const timeToPixels = (timeStr) => {
+  if (!timeStr) return 0;
   const [hours, minutes] = timeStr.split(':').map(Number);
-  const totalMinutesFromStart = (hours - CALENDAR_START_HOUR) * 60 + minutes;
+  const totalMinutesFromStart = (hours - CALENDAR_START_HOUR) * 60 + (minutes || 0);
   return (totalMinutesFromStart / 60) * TIME_SLOT_HEIGHT;
 };
 
@@ -53,9 +87,19 @@ export const pixelsToTime = (pixels) => {
  */
 export const getBookingTop = (startDateTime) => {
   try {
-    const d = typeof startDateTime === 'string' ? parseISO(startDateTime) : startDateTime;
-    const hours = d.getHours();
-    const minutes = d.getMinutes();
+    if (!startDateTime) return 0;
+    const str = String(startDateTime).replace(' ', 'T');
+    const timeMatch = str.match(/T(\d{2}):(\d{2})/);
+    let hours, minutes;
+    if (timeMatch) {
+      hours = parseInt(timeMatch[1], 10);
+      minutes = parseInt(timeMatch[2], 10);
+    } else {
+      const d = parseISO(str);
+      hours = d.getHours();
+      minutes = d.getMinutes();
+    }
+    if (isNaN(hours) || isNaN(minutes)) return 0;
     const totalMinutesFromStart = (hours - CALENDAR_START_HOUR) * 60 + minutes;
     return (totalMinutesFromStart / 60) * TIME_SLOT_HEIGHT;
   } catch {
@@ -68,12 +112,15 @@ export const getBookingTop = (startDateTime) => {
  */
 export const getBookingHeight = (startDateTime, endDateTime) => {
   try {
-    const start = typeof startDateTime === 'string' ? parseISO(startDateTime) : startDateTime;
-    const end = typeof endDateTime === 'string' ? parseISO(endDateTime) : endDateTime;
+    if (!startDateTime || !endDateTime) return 60;
+    const startStr = String(startDateTime).replace(' ', 'T');
+    const endStr = String(endDateTime).replace(' ', 'T');
+    const start = parseISO(startStr);
+    const end = parseISO(endStr);
     const durationMinutes = differenceInMinutes(end, start);
     return Math.max((durationMinutes / 60) * TIME_SLOT_HEIGHT, 20);
   } catch {
-    return 30;
+    return TIME_SLOT_HEIGHT;
   }
 };
 
@@ -105,8 +152,8 @@ export const buildDateTime = (dateStr, timeStr) => {
 
 export const getDurationMinutes = (startDateTime, endDateTime) => {
   try {
-    const start = typeof startDateTime === 'string' ? parseISO(startDateTime) : startDateTime;
-    const end = typeof endDateTime === 'string' ? parseISO(endDateTime) : endDateTime;
+    const start = typeof startDateTime === 'string' ? parseISO(startDateTime.replace(' ', 'T')) : startDateTime;
+    const end = typeof endDateTime === 'string' ? parseISO(endDateTime.replace(' ', 'T')) : endDateTime;
     return differenceInMinutes(end, start);
   } catch {
     return 0;
@@ -115,8 +162,9 @@ export const getDurationMinutes = (startDateTime, endDateTime) => {
 
 export const addDuration = (dateTimeStr, minutes) => {
   try {
-    const d = typeof dateTimeStr === 'string' ? parseISO(dateTimeStr) : dateTimeStr;
-    return format(addMinutes(d, minutes), "yyyy-MM-dd'T'HH:mm:ss");
+    const str = String(dateTimeStr).replace(' ', 'T');
+    const d = parseISO(str);
+    return formatISOLocal(addMinutes(d, minutes));
   } catch {
     return dateTimeStr;
   }

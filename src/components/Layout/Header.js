@@ -137,7 +137,17 @@ const Header = memo(({ onLoadMockData, onFilterClick }) => {
           </div>
 
           {/* Calendar icon */}
-          <button className={styles.calendarIconBtn}>📅</button>
+          <label className={styles.calendarIconBtn} style={{ position: 'relative', cursor: 'pointer' }} title="Pick date">
+            📅
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={e => {
+                if (e.target.value) setSelectedDate(e.target.value);
+              }}
+              style={{ position: 'absolute', opacity: 0, width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
+            />
+          </label>
 
           {/* Mock data */}
           {onLoadMockData && (

@@ -3,6 +3,7 @@ import { FormField, Input, Select, Textarea } from '../common/FormField';
 import useTherapistStore from '../../store/therapistStore';
 import useBookingStore from '../../store/bookingStore';
 import { getTherapistColor } from '../../utils/bookingUtils';
+import { formatISOLocal } from '../../utils/dateUtils';
 import styles from './BookingForm.module.css';
 
 const DURATION_OPTIONS = [30, 45, 60, 90, 120];
@@ -82,7 +83,7 @@ const BookingForm = ({ initialData, onSubmit, prefill }) => {
     const startDateTime = `${form.date}T${form.start_time}:00`;
     const endDate = new Date(`${form.date}T${form.start_time}:00`);
     endDate.setMinutes(endDate.getMinutes() + Number(form.duration_minutes));
-    const endDateTime = endDate.toISOString().slice(0, 19);
+    const endDateTime = formatISOLocal(endDate);
 
     onSubmit({
       client_name: form.client_name,

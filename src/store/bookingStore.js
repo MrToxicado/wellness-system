@@ -66,46 +66,48 @@ const useBookingStore = create(
         const bookingsRaw = list?.bookings ?? list?.booking ?? data?.data?.data ?? [];
         const rawList = Array.isArray(bookingsRaw) ? bookingsRaw : Object.values(bookingsRaw);
 
-        if (rawList && rawList.length > 0) {
-          const bookings = rawList.filter(b => {
-            const s = (b.status || '').toLowerCase();
-            return s !== 'cancelled' && s !== 'canceled';
-          }).map(b => {
-            const itemGroups = b.booking_item ?? {};
-            const item = Object.values(itemGroups).flat()[0] ?? {};
-            const startISO = item.service_at ? item.service_at.replace(' ', 'T') : b.start_time || '';
-            let endISO = b.end_time || '';
-            if (startISO && item.duration) {
-              const d = new Date(startISO);
-              d.setMinutes(d.getMinutes() + Number(item.duration));
-              endISO = d.toISOString();
-            }
-            const roomItem = item.room_items?.[0];
-            return {
-              ...b,
-              therapist_id: item.therapist_id ?? b.therapist_id,
-              service_id: item.service_id ?? b.service_id,
-              room_item_id: roomItem?.room_id || b.room_id || 1,
-              room_id: b.room_id || 1,
-              client_name: b.customer_name ?? b.client_name ?? '',
-              service_name: item.service ?? item.service_name ?? b.service_name ?? 'Spa Massage',
-              start_time: startISO,
-              end_time: endISO,
-              duration_minutes: item.duration ?? b.duration_minutes ?? 60,
-              requested_therapist: item.requested_person === 1 || item.requested_person === '1' || !!b.requested_therapist,
-            };
-          });
+        const bookings = rawList.filter(b => {
+          const s = (b.status || '').toLowerCase();
+          if (s === 'cancelled' || s === 'canceled') return false;
+          if (targetDate) {
+            const bDate = (b.start_time || '').replace(' ', 'T').split('T')[0];
+            return bDate === targetDate;
+          }
+          return true;
+        }).map(b => {
+          const itemGroups = b.booking_item ?? {};
+          const item = Object.values(itemGroups).flat()[0] ?? {};
+          const startISO = item.service_at ? item.service_at.replace(' ', 'T') : b.start_time || '';
+          let endISO = b.end_time || '';
+          if (startISO && item.duration) {
+            const d = new Date(startISO);
+            d.setMinutes(d.getMinutes() + Number(item.duration));
+            endISO = d.toISOString();
+          }
+          const roomItem = item.room_items?.[0];
+          return {
+            ...b,
+            therapist_id: item.therapist_id ?? b.therapist_id,
+            service_id: item.service_id ?? b.service_id,
+            room_item_id: roomItem?.room_id || b.room_id || 1,
+            room_id: b.room_id || 1,
+            client_name: b.customer_name ?? b.client_name ?? '',
+            service_name: item.service ?? item.service_name ?? b.service_name ?? 'Spa Massage',
+            start_time: startISO,
+            end_time: endISO,
+            duration_minutes: item.duration ?? b.duration_minutes ?? 60,
+            requested_therapist: item.requested_person === 1 || item.requested_person === '1' || !!b.requested_therapist,
+          };
+        });
 
-          const indexes = get()._rebuildIndexes(bookings);
-          set({ bookings, ...indexes, isLoading: false });
-          return bookings;
-        }
+        const indexes = get()._rebuildIndexes(bookings);
+        set({ bookings, ...indexes, isLoading: false });
+        return bookings;
       } catch (error) {
         logger.error('Failed to fetch bookings from Python server', error);
       }
 
-      const indexes = get()._rebuildIndexes(get().bookings);
-      set({ isLoading: false, ...indexes });
+      set({ isLoading: false });
       return get().bookings;
     },
 
@@ -213,7 +215,10 @@ const useBookingStore = create(
 
     // UI state
     setSelectedBooking: (booking) => set({ selectedBooking: booking }),
-    setSelectedDate: (date) => set({ selectedDate: date }),
+    setSelectedDate: (date) => {
+      set({ selectedDate: date });
+      get().fetchBookings({ date });
+    },
     setSearchQuery: (query) => set({ searchQuery: query }),
     setStatusFilter: (filter) => set({ statusFilter: filter }),
     clearError: () => set({ error: null }),

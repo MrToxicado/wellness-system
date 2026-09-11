@@ -13,6 +13,7 @@ import TherapistColumn from './TherapistColumn';
 // BookingBlock is rendered inside TherapistColumn
 import useBookingStore from '../../store/bookingStore';
 import useUIStore from '../../store/uiStore';
+import { parseISO, formatISOLocal } from '../../utils/dateUtils';
 import {
   THERAPIST_COLUMN_WIDTH,
   TIME_SLOT_HEIGHT,
@@ -73,14 +74,16 @@ const CalendarBoard = memo(({ therapists, onBookingClick, onSlotClick }) => {
       return;
     }
 
-    const startDate = new Date(booking.start_time);
-    const endDate = new Date(booking.end_time);
+    const startStr = String(booking.start_time).replace(' ', 'T');
+    const endStr = booking.end_time ? String(booking.end_time).replace(' ', 'T') : startStr;
+    const startDate = parseISO(startStr);
+    const endDate = parseISO(endStr);
     startDate.setMinutes(startDate.getMinutes() + minutesDelta);
     endDate.setMinutes(endDate.getMinutes() + minutesDelta);
 
     const newPayload = {
-      start_time: startDate.toISOString(),
-      end_time: endDate.toISOString(),
+      start_time: formatISOLocal(startDate),
+      end_time: formatISOLocal(endDate),
     };
 
     if (targetTherapistId && targetTherapistId !== booking.therapist_id) {
@@ -117,7 +120,9 @@ const CalendarBoard = memo(({ therapists, onBookingClick, onSlotClick }) => {
             <div className={styles.columnsRow}>
               {virtualItems.map((virtualColumn) => {
                 const therapist = therapists[virtualColumn.index];
-                const bookings = bookingsByTherapist[therapist?.therapist_id || therapist?.id] || [];
+                if (!therapist) return null;
+                const tid = therapist.therapist_id || therapist.id;
+                const bookings = bookingsByTherapist[tid] || [];
 
                 return (
                   <div

@@ -3,7 +3,7 @@ import useBookingStore from '../../store/bookingStore';
 import useTherapistStore from '../../store/therapistStore';
 import useUIStore from '../../store/uiStore';
 import useAuthStore from '../../store/authStore';
-import { formatDate, formatTime, buildDateTime } from '../../utils/dateUtils';
+import { formatDate, formatTime, buildDateTime, formatISOLocal } from '../../utils/dateUtils';
 import logger from '../../utils/logger';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './EditBookingModal.module.css';
@@ -74,9 +74,9 @@ const EditBookingModal = () => {
     if (!form.therapist_id) { showError('Please select a therapist'); return; }
 
     const start = buildDateTime(form.date, form.start_time);
-    const endDate = new Date(start);
+    const endDate = new Date(start.replace(' ', 'T'));
     endDate.setMinutes(endDate.getMinutes() + Number(form.duration));
-    const end = endDate.toISOString();
+    const end = formatISOLocal(endDate);
 
     // Extract the existing booking_item id so the API knows which item to update
     const itemGroups = selectedBooking.booking_item ?? {};

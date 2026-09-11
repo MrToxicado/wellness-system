@@ -24,6 +24,7 @@ const Badge = ({ label, color }) => (
 );
 
 const BookingBlock = memo(({ booking, onClick }) => {
+  if (!booking) return null;
   const status = normalizeStatus(booking.status);
   const style = STATUS_STYLES[status] || STATUS_STYLES.confirmed;
 

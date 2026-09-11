@@ -12,7 +12,8 @@ import styles from './TherapistColumn.module.css';
 
 const TOTAL_HEIGHT = TOTAL_HOURS * TIME_SLOT_HEIGHT;
 
-const TherapistColumn = memo(({ therapist, bookings, onBookingClick, onSlotClick, columnIndex }) => {
+const TherapistColumn = memo(({ therapist, bookings = [], onBookingClick, onSlotClick, columnIndex }) => {
+  if (!therapist) return null;
   const gender = (therapist.gender || '').toLowerCase();
   const avatarColor = gender === 'male' ? '#3B82F6' : '#EC4899';
 
