@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../utils/logger';
 
-const BASE_URL = '/api/v1';
+const BASE_URL = 'http://localhost:5000/api/v1';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -42,9 +42,6 @@ apiClient.interceptors.response.use(
     const message = error.response?.data?.message || error.message;
 
     logger.apiError(endpoint, error);
-
-    // Keep user session active even if specific endpoints return 401
-    // UI will gracefully load fallback/mock data without kicking user out
 
     const normalizedError = {
       message,

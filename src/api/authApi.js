@@ -1,14 +1,15 @@
+import apiClient from './client';
+
 export const login = async (email, password) => {
-  return {
-    _extractedToken: 'local_wellness_auth_token_100',
-    data: {
-      user: {
-        id: 1,
-        email: email || 'react@hipster-inc.com',
-        name: 'Wellness Admin',
-      },
-    },
-  };
+  const formData = new FormData();
+  formData.append('email', email);
+  formData.append('password', password);
+
+  const response = await apiClient.post('/login', formData);
+  const body = response.data;
+  const tokenObj = body?.data?.data?.token;
+  const token = (typeof tokenObj === 'string' ? tokenObj : tokenObj?.token) || 'python_jwt_token';
+  return { ...body, _extractedToken: token };
 };
 
 export const logout = async () => {
