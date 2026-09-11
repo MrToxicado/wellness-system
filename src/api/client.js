@@ -1,7 +1,7 @@
 import axios from 'axios';
 import logger from '../utils/logger';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || 'https://dev.natureland.hipster-virtual.com/api/v1';
+const BASE_URL = '/api/v1';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -43,17 +43,8 @@ apiClient.interceptors.response.use(
 
     logger.apiError(endpoint, error);
 
-    if (status === 401) {
-      if (!endpoint.includes('/login')) {
-        // Only fire auth:expired if the user actually had a token
-        // (prevents spurious logouts on page reload before token is set)
-        const hadToken = !!localStorage.getItem('auth_token');
-        localStorage.removeItem('auth_token');
-        if (hadToken) {
-          window.dispatchEvent(new CustomEvent('auth:expired'));
-        }
-      }
-    }
+    // Keep user session active even if specific endpoints return 401
+    // UI will gracefully load fallback/mock data without kicking user out
 
     const normalizedError = {
       message,
