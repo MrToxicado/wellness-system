@@ -1,0 +1,106 @@
+export const MOCK_THERAPISTS = [
+  { id: 1, therapist_id: 1, name: 'Lily', alias: 'Lily', gender: 'Female', specialization: 'Swedish Massage' },
+  { id: 2, therapist_id: 2, name: 'James', alias: 'James', gender: 'Male', specialization: 'Deep Tissue' },
+  { id: 3, therapist_id: 3, name: 'Emma', alias: 'Emma', gender: 'Female', specialization: 'Hot Stone' },
+  { id: 4, therapist_id: 4, name: 'Lucas', alias: 'Lucas', gender: 'Male', specialization: 'Aromatherapy' },
+  { id: 5, therapist_id: 5, name: 'Sophia', alias: 'Sophia', gender: 'Female', specialization: 'Facial & Skin' },
+  { id: 6, therapist_id: 6, name: 'Oliver', alias: 'Oliver', gender: 'Male', specialization: 'Foot Reflexology' },
+  { id: 7, therapist_id: 7, name: 'Ava', alias: 'Ava', gender: 'Female', specialization: 'Body Scrub' },
+  { id: 8, therapist_id: 8, name: 'Noah', alias: 'Noah', gender: 'Male', specialization: 'Sports Massage' },
+  { id: 9, therapist_id: 9, name: 'Isabella', alias: 'Isabella', gender: 'Female', specialization: 'Shiatsu' },
+  { id: 10, therapist_id: 10, name: 'Liam', alias: 'Liam', gender: 'Male', specialization: 'Thai Massage' },
+  { id: 11, therapist_id: 11, name: 'Mia', alias: 'Mia', gender: 'Female', specialization: 'Ayurvedic Massage' },
+  { id: 12, therapist_id: 12, name: 'William', alias: 'William', gender: 'Male', specialization: 'Deep Tissue' },
+  { id: 13, therapist_id: 13, name: 'Charlotte', alias: 'Charlotte', gender: 'Female', specialization: 'Reflexology' },
+  { id: 14, therapist_id: 14, name: 'Elijah', alias: 'Elijah', gender: 'Male', specialization: 'Hot Stone' },
+  { id: 15, therapist_id: 15, name: 'Amelia', alias: 'Amelia', gender: 'Female', specialization: 'Aromatherapy' },
+];
+
+export const MOCK_SERVICES = [
+  { id: 1, name: 'Swedish Massage', duration: 60, price: 80, category_name: 'Massage Therapy' },
+  { id: 2, name: 'Deep Tissue Massage', duration: 60, price: 100, category_name: 'Massage Therapy' },
+  { id: 3, name: 'Aromatherapy Massage', duration: 60, price: 90, category_name: 'Massage Therapy' },
+  { id: 4, name: 'Hot Stone Therapy', duration: 90, price: 140, category_name: 'Specialty Therapy' },
+  { id: 5, name: 'Foot Reflexology', duration: 45, price: 60, category_name: 'Reflexology' },
+  { id: 6, name: 'Hydrating Facial Treatment', duration: 45, price: 75, category_name: 'Facial Care' },
+  { id: 7, name: 'Anti-Aging Facial', duration: 60, price: 110, category_name: 'Facial Care' },
+  { id: 8, name: 'Exfoliating Body Scrub', duration: 60, price: 95, category_name: 'Body Treatment' },
+];
+
+export const MOCK_ROOMS = [
+  { id: 1, room_id: 1, name: 'Room 1 (Single Bed)', room_name: 'Room 1 (Single Bed)' },
+  { id: 2, room_id: 2, name: 'Room 2 (Single Bed)', room_name: 'Room 2 (Single Bed)' },
+  { id: 3, room_id: 3, name: 'Room 3 (Double Bed)', room_name: 'Room 3 (Double Bed)' },
+  { id: 4, room_id: 4, name: 'VIP Suite 1', room_name: 'VIP Suite 1' },
+  { id: 5, room_id: 5, name: 'VIP Suite 2', room_name: 'VIP Suite 2' },
+  { id: 6, room_id: 6, name: 'Therapy Room A', room_name: 'Therapy Room A' },
+  { id: 7, room_id: 7, name: 'Therapy Room B', room_name: 'Therapy Room B' },
+];
+
+export const MOCK_CLIENTS = [
+  { id: 101, name: 'Yuvraj', lastname: 'Singh', contact_number: '+65 9123 4567', phone: '+65 9123 4567', email: 'yuvraj@example.com' },
+  { id: 102, name: 'Emma', lastname: 'Watson', contact_number: '+65 9234 5678', phone: '+65 9234 5678', email: 'emma@example.com' },
+  { id: 103, name: 'John', lastname: 'Doe', contact_number: '+65 9345 6789', phone: '+65 9345 6789', email: 'john@example.com' },
+  { id: 104, name: 'Sarah', lastname: 'Jenkins', contact_number: '+65 9456 7890', phone: '+65 9456 7890', email: 'sarah@example.com' },
+  { id: 105, name: 'Michael', lastname: 'Brown', contact_number: '+65 9567 8901', phone: '+65 9567 8901', email: 'michael@example.com' },
+  { id: 106, name: 'Jessica', lastname: 'Taylor', contact_number: '+65 9678 9012', phone: '+65 9678 9012', email: 'jessica@example.com' },
+  { id: 107, name: 'David', lastname: 'Lee', contact_number: '+65 9789 0123', phone: '+65 9789 0123', email: 'david@example.com' },
+];
+
+export const generateSampleBookings = (dateStr = new Date().toISOString().split('T')[0]) => {
+  return [
+    {
+      id: 501,
+      therapist_id: 1,
+      service_id: 1,
+      room_id: 1,
+      client_name: 'Yuvraj Singh',
+      service_name: 'Swedish Massage',
+      start_time: `${dateStr}T09:30:00`,
+      end_time: `${dateStr}T10:30:00`,
+      duration_minutes: 60,
+      status: 'confirmed',
+      requested_therapist: true,
+      notes: 'Prefers firm pressure on shoulders',
+    },
+    {
+      id: 502,
+      therapist_id: 2,
+      service_id: 2,
+      room_id: 2,
+      client_name: 'Emma Watson',
+      service_name: 'Deep Tissue Massage',
+      start_time: `${dateStr}T11:00:00`,
+      end_time: `${dateStr}T12:00:00`,
+      duration_minutes: 60,
+      status: 'confirmed',
+      requested_therapist: false,
+    },
+    {
+      id: 503,
+      therapist_id: 3,
+      service_id: 4,
+      room_id: 4,
+      client_name: 'Sarah Jenkins',
+      service_name: 'Hot Stone Therapy',
+      start_time: `${dateStr}T14:00:00`,
+      end_time: `${dateStr}T15:30:00`,
+      duration_minutes: 90,
+      status: 'check_in',
+      requested_therapist: true,
+    },
+    {
+      id: 504,
+      therapist_id: 5,
+      service_id: 6,
+      room_id: 3,
+      client_name: 'Jessica Taylor',
+      service_name: 'Hydrating Facial Treatment',
+      start_time: `${dateStr}T16:00:00`,
+      end_time: `${dateStr}T16:45:00`,
+      duration_minutes: 45,
+      status: 'confirmed',
+      requested_therapist: false,
+    },
+  ];
+};

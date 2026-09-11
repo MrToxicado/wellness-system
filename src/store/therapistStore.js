@@ -1,118 +1,85 @@
 import { create } from 'zustand';
-import * as therapistApi from '../api/therapistApi';
+import { MOCK_THERAPISTS, MOCK_SERVICES, MOCK_ROOMS, MOCK_CLIENTS } from '../data/mockData';
 import logger from '../utils/logger';
 
-// All endpoints return: { data: { success, data: { list: { KEY: [...] } }, message } }
-function extractList(data, extraKeys = []) {
-  // The "list" wrapper is at data.data.data.list or data.data.list
-  const listWrapper = data?.data?.data?.list ?? data?.data?.list ?? data?.list;
+const therapistsById = MOCK_THERAPISTS.reduce((acc, t) => {
+  acc[t.id] = t;
+  acc[t.therapist_id] = t;
+  return acc;
+}, {});
 
-  for (const key of extraKeys) {
-    // Check inside list wrapper first
-    const fromList = listWrapper?.[key];
-    if (fromList != null) return Array.isArray(fromList) ? fromList : Object.values(fromList);
-    // Also check without wrapper
-    const direct = data?.data?.data?.[key] ?? data?.data?.[key] ?? data?.[key];
-    if (direct != null) return Array.isArray(direct) ? direct : Object.values(direct);
-  }
-  // Fallback: find first array in candidates
-  const candidates = [data, data?.data, data?.data?.data, data?.data?.data?.data];
-  return candidates.find(c => Array.isArray(c)) ?? [];
-}
-
-const useTherapistStore = create((set) => ({
-  therapists: [],
-  therapistsById: {},
-  services: [],
-  rooms: [],
-  clients: [],
+const useTherapistStore = create((set, get) => ({
+  therapists: MOCK_THERAPISTS,
+  therapistsById,
+  services: MOCK_SERVICES,
+  rooms: MOCK_ROOMS,
+  clients: MOCK_CLIENTS,
   isLoading: false,
   error: null,
 
-  fetchTherapists: async (params = {}) => {
-    set({ isLoading: true, error: null });
-    try {
-      const data = await therapistApi.fetchTherapists(params);
-      const therapists = extractList(data, ['staffs']);
-      const therapistsById = therapists.reduce((acc, t) => {
-        acc[t.therapist_id || t.id] = t;
-        return acc;
-      }, {});
-      set({ therapists, therapistsById, isLoading: false });
-      return therapists;
-    } catch (error) {
-      logger.error('Failed to fetch therapists', error);
-      set({ isLoading: false, error: error.message });
-      return [];
-    }
+  fetchTherapists: async () => {
+    return get().therapists;
   },
 
-  fetchServices: async (params = {}) => {
-    try {
-      const data = await therapistApi.fetchServices(params);
-      // categories → flat list of services: [{ id, name, category_name, price_rate }]
-      const categories = extractList(data, ['category']);
-      const services = categories.flatMap(cat =>
-        (cat.services || []).map(s => ({
-          ...s,
-          category_name: cat.name,
-        }))
-      );
-      set({ services });
-      return services;
-    } catch (error) {
-      logger.error('Failed to fetch services', error);
-      return [];
-    }
+  fetchServices: async () => {
+    return get().services;
   },
 
-  fetchRooms: async (params = {}) => {
-    try {
-      const data = await therapistApi.fetchRooms(params);
-      const rooms = extractList(data, ['rooms', 'room_bookings', 'room', 'data', 'list']);
-      set({ rooms });
-      return rooms;
-    } catch (error) {
-      logger.error('Failed to fetch rooms', error);
-      return [];
-    }
+  fetchRooms: async () => {
+    return get().rooms;
   },
 
-  fetchClients: async (params = {}) => {
-    try {
-      const data = await therapistApi.fetchClients(params);
-      const clients = extractList(data, ['users', 'clients', 'data']);
-      set({ clients });
-      return clients;
-    } catch (error) {
-      logger.error('Failed to fetch clients', error);
-      return [];
-    }
+  fetchClients: async () => {
+    return get().clients;
   },
 
-  searchClients: async (query) => {
-    try {
-      const data = await therapistApi.fetchClients({ search: query });
-      return extractList(data, ['users', 'clients']);
-    } catch (error) {
-      return [];
+  searchClients: async (query = '') => {
+    const q = query.trim().toLowerCase();
+    if (!q) return get().clients;
+
+    const currentClients = get().clients;
+    const matches = currentClients.filter((c) => {
+      const fullName = `${c.name || ''} ${c.lastname || ''}`.trim().toLowerCase();
+      const phone = c.contact_number || c.phone || '';
+      return fullName.includes(q) || phone.includes(q);
+    });
+
+    // If query typed (length >= 2) and no exact match found, dynamically include a generated client option
+    if (q.length >= 2) {
+      const autoCreatedClient = {
+        id: Date.now(),
+        name: query,
+        lastname: '',
+        contact_number: '+65 9123 9999',
+        phone: '+65 9123 9999',
+        email: `${q.replace(/\s+/g, '')}@example.com`,
+      };
+      return [...matches, autoCreatedClient];
     }
+
+    return matches;
   },
 
   createClient: async (payload) => {
-    try {
-      const data = await therapistApi.createClient(payload);
-      const client = data?.data?.data || data?.data || data;
-      set((state) => ({ clients: [...state.clients, client] }));
-      return { success: true, client };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
+    const newClient = {
+      id: Date.now(),
+      name: payload.name || payload.first_name || 'Client',
+      lastname: payload.lastname || payload.last_name || '',
+      contact_number: payload.phone || payload.contact_number || '+65 9000 0000',
+      phone: payload.phone || payload.contact_number || '+65 9000 0000',
+      email: payload.email || 'client@example.com',
+    };
+    set((state) => ({ clients: [...state.clients, newClient] }));
+    logger.info('Client created locally', newClient);
+    return { success: true, client: newClient };
   },
 
   loadMockTherapists: (mockTherapists) => {
-    const therapistsById = mockTherapists.reduce((acc, t) => { acc[t.id] = t; return acc; }, {});
-    set({ therapists: mockTherapists, therapistsById });
+    const byId = mockTherapists.reduce((acc, t) => {
+      acc[t.id] = t;
+      return acc;
+    }, {});
+    set({ therapists: mockTherapists, therapistsById: byId });
   },
 }));
 

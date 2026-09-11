@@ -192,11 +192,33 @@ const CreateBookingModal = () => {
                       type="text"
                       value={clientSearch}
                       onChange={e => setClientSearch(e.target.value)}
-                      placeholder="Search or create client"
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && clientSearch.trim()) {
+                          e.preventDefault();
+                          const newClient = { id: Date.now(), name: clientSearch.trim(), lastname: '', contact_number: '+65 9123 4567', phone: '+65 9123 4567' };
+                          setSelectedClient(newClient);
+                          setClientSearch('');
+                        }
+                      }}
+                      placeholder="Type client name (e.g. Yuvraj Singh)..."
                       className={`${sharedStyles.formInput} ${styles.searchInput}`}
                     />
                   </div>
-                  <button className={styles.addBtn}>+</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (clientSearch.trim()) {
+                        const newClient = { id: Date.now(), name: clientSearch.trim(), lastname: '', contact_number: '+65 9123 4567', phone: '+65 9123 4567' };
+                        setSelectedClient(newClient);
+                        setClientSearch('');
+                      } else {
+                        const defaultClient = { id: Date.now(), name: 'Guest Client', lastname: '', contact_number: '+65 9123 4567', phone: '+65 9123 4567' };
+                        setSelectedClient(defaultClient);
+                      }
+                    }}
+                    className={styles.addBtn}
+                    title="Select/Create Client"
+                  >+</button>
                 </div>
                 {filteredClients.length > 0 && (
                   <div className={styles.clientDropdown}>
