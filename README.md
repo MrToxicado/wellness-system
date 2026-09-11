@@ -1,14 +1,15 @@
 # Wellness Booking System
 
-A single-page React application for managing spa/wellness bookings, built as a technical assessment.
+A fullstack SPA for managing spa/wellness bookings, featuring a **Python (Flask) + SQLite Database** backend and a **React 19** frontend.
 
 ## Tech Stack
 
-- **React 19** (Create React App)
-- **Zustand v5** — global state management
-- **@dnd-kit/core** — drag-and-drop rescheduling
-- **@tanstack/react-virtual** — virtual rendering for the therapist calendar
-- **Axios** — HTTP client with auth interceptor
+- **Backend**: Python 3.11, Flask, Flask-CORS, SQLite Database
+- **Frontend**: React 19 (Create React App), Vanilla CSS Modules
+- **State Management**: Zustand v5 — global state management
+- **Drag & Drop**: @dnd-kit/core — drag-and-drop calendar rescheduling
+- **Virtualization**: @tanstack/react-virtual — virtual rendering for therapist columns
+- **HTTP Client**: Axios — HTTP client with auth interceptor
 
 ---
 
