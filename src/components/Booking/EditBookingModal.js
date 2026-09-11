@@ -16,8 +16,6 @@ const EditBookingModal = () => {
   const isSaving = useBookingStore(s => s.isSaving);
 
   const therapists = useTherapistStore(s => s.therapists);
-  // eslint-disable-next-line no-unused-vars
-  const services = useTherapistStore(s => s.services);
   const rooms = useTherapistStore(s => s.rooms);
 
   const currentUser = useAuthStore(s => s.user);

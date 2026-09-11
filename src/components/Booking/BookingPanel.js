@@ -57,8 +57,6 @@ const BookingPanel = memo(() => {
   const initials = clientName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
   const services = booking.services?.length ? booking.services : (booking.service_name ? [{ name: booking.service_name }] : []);
-  // eslint-disable-next-line no-unused-vars
-  const service = services[0] || {};
 
   const DetailLabel = ({ children }) => (
     <span className={styles.detailLabel}>{children}</span>
